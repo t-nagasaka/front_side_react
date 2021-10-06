@@ -4,7 +4,7 @@ export interface File extends Blob {
   readonly name: string;
 }
 
-// authSlice.ts/
+// authSlice.tsで使用する/
 export interface PROPS_AUTHEN {
   email: string;
   password: string;

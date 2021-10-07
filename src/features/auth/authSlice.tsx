@@ -47,7 +47,7 @@ export const fetchAsyncRegister = createAsyncThunk(
 );
 
 // プロフィール作成用
-export const fetchAsyncCreateProfile = createAsyncThunk(
+export const fetchAsyncCreateProf = createAsyncThunk(
   "profile/post",
   // nickName(nickName)のオブジェクトを引数として取得
   // 返り値としてJWTのアクセストークンがresに返ってくる
@@ -66,7 +66,7 @@ export const fetchAsyncCreateProfile = createAsyncThunk(
 );
 
 // プロフィール更新用
-export const fetchAsyncUpdateProfile = createAsyncThunk(
+export const fetchAsyncUpdateProf = createAsyncThunk(
   "profile/put",
   // profile(id, nickName, img)のオブジェクトを引数として取得
   // 返り値としてJWTのアクセストークンがresに返ってくる
@@ -90,6 +90,7 @@ export const fetchAsyncUpdateProfile = createAsyncThunk(
         },
       }
     );
+    // コンポーネントを介してextraReducersにbuilderとして返却される
     return res.data;
   }
 );
@@ -107,17 +108,14 @@ export const fetchAsyncGetMyProf = createAsyncThunk("profile/get", async () => {
 });
 
 // プロフィール一覧取得用
-export const fetchAsyncGetMyProfs = createAsyncThunk(
-  "profile/get",
-  async () => {
-    const res = await axios.get(`${apiUrl}api/profile/`, {
-      headers: {
-        Authorization: `JWT ${localStorage.localJWT}`,
-      },
-    });
-    return res.data;
-  }
-);
+export const fetchAsyncGetProfs = createAsyncThunk("profiles/get", async () => {
+  const res = await axios.get(`${apiUrl}api/profile/`, {
+    headers: {
+      Authorization: `JWT ${localStorage.localJWT}`,
+    },
+  });
+  return res.data;
+});
 
 // ログインモーダルのステートを管理
 export const authSlice = createSlice({
@@ -185,12 +183,35 @@ export const authSlice = createSlice({
     },
     // プロフィール変更のモーダルオープン状態をfalseに変更(閉じる)
     resetOpenProfile(state) {
-      state.openProfile;
+      state.openProfile = false;
     },
     // ニックネームデータの状態管理
     editNickname(state, action) {
       state.myprofile.nickName = action.payload;
     },
+  },
+  // CreateActionの後処理
+  // createThunkからの引数でbuilderに格納
+  //   紐付いているThunkで定義されたActionを元にstateを変更する
+  extraReducers: (builder) => {
+    builder.addCase(fetchAsyncLogin.fulfilled, (state, action) => {
+      localStorage.setItem("localJWT", action.payload.access);
+    });
+    builder.addCase(fetchAsyncCreateProf.fulfilled, (state, action) => {
+      state.myprofile = action.payload;
+    });
+    builder.addCase(fetchAsyncGetMyProf.fulfilled, (state, action) => {
+      state.myprofile = action.payload;
+    });
+    builder.addCase(fetchAsyncGetProfs.fulfilled, (state, action) => {
+      state.profiles = action.payload;
+    });
+    builder.addCase(fetchAsyncUpdateProf.fulfilled, (state, action) => {
+      state.myprofile = action.payload;
+      state.profiles = state.profiles.map((prof) =>
+        prof.id === action.payload.id ? action.payload : prof
+      );
+    });
   },
 });
 
@@ -207,6 +228,15 @@ export const {
   editNickname,
 } = authSlice.actions;
 
-export const selectCount = (state: RootState) => state.counter.value;
+// 最初はinitial_stateで設定した初期値を取得
+// 以降は最新のステートを取得
+// ルートステートはすべてのステートを参照した値
+export const selectIsLoadingAuth = (state: RootState) =>
+  state.auth.isLoadingAuth;
+export const selectOpenSignIn = (state: RootState) => state.auth.openSignIn;
+export const selectOpenSignUp = (state: RootState) => state.auth.openSignUp;
+export const selectOpenProfile = (state: RootState) => state.auth.openProfile;
+export const selectProfile = (state: RootState) => state.auth.myprofile;
+export const selectProfiles = (state: RootState) => state.auth.profiles;
 
 export default authSlice.reducer;

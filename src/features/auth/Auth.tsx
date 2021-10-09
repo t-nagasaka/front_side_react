@@ -104,7 +104,7 @@ const Auth: React.FC = () => {
             <div>
               <form onSubmit={handleSubmit}>
                 <div className={styles.auth_signUp}>
-                  <h1 className={styles.auth_titles}>SNS clone</h1>
+                  <h1 className={styles.auth_title}>SNS clone</h1>
                   <br />
                   <div className={styles.auth_progress}>
                     {isLoadingAuth && <CircularProgress />}
@@ -182,7 +182,7 @@ const Auth: React.FC = () => {
               await dispatch(fetchAsyncGetMyProf());
             }
             await dispatch(fetchCredEnd());
-            await dispatch(resetOpenSignUp());
+            await dispatch(resetOpenSignIn());
           }}
           validationSchema={object().shape({
             email: string()
@@ -203,7 +203,7 @@ const Auth: React.FC = () => {
             <div>
               <form onSubmit={handleSubmit}>
                 <div className={styles.auth_signUp}>
-                  <h1 className={styles.auth_titles}>SNS clone</h1>
+                  <h1 className={styles.auth_title}>SNS clone</h1>
                   <br />
                   <div className={styles.auth_progress}>
                     {isLoadingAuth && <CircularProgress />}
@@ -221,7 +221,6 @@ const Auth: React.FC = () => {
                   {touched.email && errors.email ? (
                     <div className={styles.auth_error}>{errors.email}</div>
                   ) : null}
-
                   <TextField
                     placeholder="password"
                     type="password"
@@ -242,15 +241,15 @@ const Auth: React.FC = () => {
                     disabled={!isValid}
                     type="submit"
                   >
-                    Register
+                    Login
                   </Button>
                   <br />
                   <br />
                   <span
                     className={styles.auth_text}
                     onClick={async () => {
-                      await dispatch(resetOpenSignUp());
-                      await dispatch(setOpenSignIn());
+                      await dispatch(resetOpenSignIn());
+                      await dispatch(setOpenSignUp());
                     }}
                   >
                     You already have a account ?

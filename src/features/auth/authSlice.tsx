@@ -27,6 +27,7 @@ export const fetchAsyncLogin = createAsyncThunk(
       },
     });
     //   JWTトークンを返却
+    console.log(res);
     return res.data;
   }
 );
@@ -194,6 +195,7 @@ export const authSlice = createSlice({
   // createThunkからの引数でbuilderに格納
   //   紐付いているThunkで定義されたActionを元にstateを変更する
   extraReducers: (builder) => {
+    console.log(builder);
     builder.addCase(fetchAsyncLogin.fulfilled, (state, action) => {
       localStorage.setItem("localJWT", action.payload.access);
     });

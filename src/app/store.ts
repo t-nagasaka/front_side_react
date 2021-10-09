@@ -17,4 +17,5 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   Action<string>
 >;
 
+// 型をstoreのdispatchから流用するためにエクスポートさせる
 export type AppDispatch = typeof store.dispatch;

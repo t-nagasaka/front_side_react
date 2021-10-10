@@ -6,8 +6,8 @@ import axios from "axios";
 import { PROPS_NEWPOST, PROPS_LIKED, PROPS_COMMENT } from "../types";
 
 // !DjangoのUrlパスを環境変数で指定
-const apiUrlPost = `${process.env.REACT_APP_DEV_API_URL}api/post`;
-const apiUrlComment = `${process.env.REACT_APP_DEV_API_URL}api/comment`;
+const apiUrlPost = `${process.env.REACT_APP_DEV_API_URL}api/post/`;
+const apiUrlComment = `${process.env.REACT_APP_DEV_API_URL}api/comment/`;
 
 export const fetchAsyncGetPosts = createAsyncThunk("post/get", async () => {
   const res = await axios.get(apiUrlPost, {
@@ -155,13 +155,13 @@ export const postSlice = createSlice({
     builder.addCase(fetchAsyncGetComments.fulfilled, (state, action) => {
       return {
         ...state,
-        posts: action.payload,
+        comments: action.payload,
       };
     });
     builder.addCase(fetchAsyncPostComment.fulfilled, (state, action) => {
       return {
         ...state,
-        posts: [...state.comments, action.payload],
+        comments: [...state.comments, action.payload],
       };
     });
     builder.addCase(fetchAsyncPatchLiked.fulfilled, (state, action) => {
@@ -186,7 +186,7 @@ export const {
 // 最初はinitial_stateで設定した初期値を取得
 // 以降は最新のステートを取得
 // ルートステートはすべてのステートを参照した値
-export const selectIsLoadingAuth = (state: RootState) =>
+export const selectIsLoadingPost = (state: RootState) =>
   state.post.isLoadingPost;
 export const selectOpenNewPost = (state: RootState) => state.post.openNewPost;
 export const selectPosts = (state: RootState) => state.post.posts;
